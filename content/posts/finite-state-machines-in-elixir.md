@@ -21,9 +21,60 @@ I noticed that each of the people in the cafe works a little bit like
 a state machine and I wondered if I could model one of these state
 machines in a computer program.
 
-First, I started with a really simple process: the person purchasing the coffee.
+First, I started with a really simple process: the person purchasing
+the coffee.
 
-Model an fsm example in increasing detail.
+Let's start small: with a single test. I want to test two simple behaviors:
+
+- I can create and start a coffee purchaser state machine. When I
+  create the state machine I want to initialize it with the guests
+  order.
+- When the state machine start, it begins in the `waiting` state.
+
+<script src="https://gist.github.com/smoynes/301f4bebaf2d8f7684af.js?file=FsmExperimentsTest.exs"></script>
+
+So what does this say? Not much, really. Just that when I create a new
+coffee purchaser, it starts in the waiting state. The test calls
+function called `start_link` that creates a new purchaser FSM and
+passes it a list of things to buy; In this case, just one item: a
+double espresso.
+
+I also add a convenience for testing: a query event that asks the
+state machine in which state it is currently. The test calls
+`FsmExperiments.CurrentPurchaser.current_state` to get the current
+state.
+
+Now, to implement the purchaser state-machine using the `gen_fsm` OTP
+behavior.
+
+<script src="https://gist.github.com/smoynes/301f4bebaf2d8f7684af.js?file=CoffeePurchaser.ex"></script>
+
+To start a new state machine I create a new function that delegates to
+the `gen_fsm.start_link` module passing three arguments: the name of
+the module implementing the behavior, the initialization parameters,
+and a list of options for creating the process (none, in this
+case). The function will return a tuple, `{:ok, pid}`, to the caller
+when the state machine is started and initialized.
+
+The `gen_fsm` module will take care of creating a process for us and
+calling the `init(order)` callback function within the process and
+waiting for it to finish. The initialization function returns a tuple
+to indicate success, `{:ok, initial_state, state_machine_context}`
+
+Next, I want to implement the `current_state` query. But before I
+that, a little background for people new to Elixir: the engine of
+application state is the process. In object-oriented languages,
+objects are responsible for storing state; in elixir we store state in
+processes. << really bad >>
+
+So get the current state of the purchaser, one needs to communicate
+with the FSM process with a message. We want our FSM to handle this
+message no matter which state it is in and respond to the calling
+process a reply message. That seems like a lot to do but the `gen_fsm`
+module has support for this messaging pattern using
+`sync_send_all_state_event`: it sends a *synchronous event* that can
+be handled in every state.
+
 
 - coffee purchasing
 
