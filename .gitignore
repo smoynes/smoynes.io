@@ -1,0 +1,7 @@
+#Custom
+output/
+plugins/
+themes/
+*.pid
+/cache/
+*.py[co]
