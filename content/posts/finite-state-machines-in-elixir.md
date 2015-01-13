@@ -18,8 +18,15 @@ people behind the counter that make espresso and lattes and of course
 someone to take my money.
 
 I noticed that each of the people in the cafe works a little bit like
-a state machine and I wondered if I could model one of these state
-machines in a computer program.
+a state machine and I wondered if I could model these state machines
+in a computer program.
+
+I'm trying to learn the a new programming language so I figured I'd
+explore how to implement this model in Elixir. (The post assumes a
+basic familiarity with Elixir syntax. I'll try explain some of it but
+the unfamiliar reader is encouraged to read the
+[the crash course](http://elixir-lang.org/crash-course.html); it
+should cover everything needed to follow along.)
 
 First, I started with a really simple process: the person purchasing
 the coffee.
@@ -67,13 +74,35 @@ application state is the process. In object-oriented languages,
 objects are responsible for storing state; in elixir we store state in
 processes. << really bad >>
 
-So get the current state of the purchaser, one needs to communicate
+To get the current state of the purchaser, one needs to communicate
 with the FSM process with a message. We want our FSM to handle this
 message no matter which state it is in and respond to the calling
-process a reply message. That seems like a lot to do but the `gen_fsm`
+process with a reply message. That seems like a lot but the `gen_fsm`
 module has support for this messaging pattern using
-`sync_send_all_state_event`: it sends a *synchronous event* that can
-be handled in every state.
+`sync_send_all_state_event(fsm, event)`: it sends a *synchronous
+event*, `event` that can be handled in every state to the process
+`fsm`.
+
+When the `gen_fsm` behavior handles accepting the event and running
+the callback function `handle_sync_event(event, from, state, context)`
+in our module and passing a few parameters:
+
+- `event`: the event that was sent; by convention the event is usually
+   an atom (`:query_state`) or a tuple (`{:event_name, event_data}`)
+   if there is data to be sent with the event;
+- `from`: the process that sent the message;
+- `state`: the state the finite state machine is in; and
+- `context`: the data used by the process; in order to avoid confusion
+  we call it this instead of the more typical `state`.
+
+We make use of pattern matching in the function definition of
+`CoffePurchaser.handle_sync_event`. The handler is declared to accept
+`:query_state` events and returns a tuple `{:reply, response,
+next_state, next_context}` to reply with `response` to the calling
+process and to continue the current process in another state,
+`next_state` with new process data, `next_context`. For a query event,
+we don't want to change the FSM's state or process data so we return
+those unchanged.
 
 
 - coffee purchasing
