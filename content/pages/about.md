@@ -7,7 +7,7 @@ I am Scott Moynes but you can call me `smoynes` (voicing: monospaced).
 I think the information superhighway is pretty awesome and this
 website is where I put my stuff online. There's not much stuff here
 yet, but I value quality more than quantity and hope to share some
-cool jazzy soon.
+cool jazzy things soon.
 
 In the meantime, consider these words from my hero.
 
