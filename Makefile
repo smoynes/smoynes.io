@@ -15,7 +15,7 @@ FTP_TARGET_DIR=/
 SSH_HOST=localhost
 SSH_PORT=22
 SSH_USER=root
-SSH_TARGET_DIR=/var/www
+SSH_TARGET_DIR=/var/www/smoynes.io/public_html
 
 S3_BUCKET=my_s3_bucket
 
