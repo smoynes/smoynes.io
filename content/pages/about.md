@@ -2,7 +2,7 @@ Title: about me
 Slug: about-smoynes
 Date: 2015-01-13
 
-I am Scott Moynes but you can call me `smoynes` (voicing: monospaced). Shaq is my
+I am Scott Moynes but you can call me `smoynes` (voicing: monospaced).
 
 I think the information superhighway is pretty awesome and this
 website is where I put my stuff online. There's not much stuff here
