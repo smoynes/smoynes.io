@@ -31,7 +31,7 @@ machine and they communicated through messages. I wondered if I could
 model this system in a computer program.
 
 I wondered if I could implement a model of this system in a
-programming language that I am learning called Elixir. 
+programming language that I am learning called Elixir.
 
 (The post assumes a basic familiarity with Elixir syntax. I'll try
 explain some of it, but the unfamiliar reader is encouraged to read
@@ -45,7 +45,24 @@ Let's start small: with a single test. I want to test two simple behaviors:
   order.
 - When the state machine start, it begins in the `waiting` state.
 
-<script src="https://gist.github.com/smoynes/301f4bebaf2d8f7684af/91e2b9bad3c0e29dc5279801d035dec1b07fc459.js?file=FsmExperimentsTest.exs"></script>
+<!-- -->
+
+    :::elixir
+    defmodule FsmExperimentsTest do
+      use ExUnit.Case
+
+      alias FsmExperiments.CoffeePurchaser
+
+      setup do
+        {:ok, %{order: [:espresso]}}
+      end
+
+      test "initial state is :waiting", %{order: order} do
+        assert {:ok, fsm} = CoffeePurchaser.start_link order
+        assert :waiting = CoffeePurchaser.current_state fsm
+      end
+
+    end
 
 So what does this say? Not much, really. Just that when I create a new
 coffee purchaser, it starts in the waiting state. The test calls
@@ -61,7 +78,25 @@ state.
 Now, to implement the purchaser state-machine using the `gen_fsm` OTP
 behavior.
 
-<script src="https://gist.github.com/smoynes/301f4bebaf2d8f7684af/91e2b9bad3c0e29dc5279801d035dec1b07fc459.js?file=CoffeePurchaser.ex"></script>
+    ::::elixir
+    defmodule FsmExperiments.CoffeePurchaser do
+
+      def start_link(order) do
+        :gen_fsm.start_link __MODULE__, order, []
+      end
+
+      def current_state(fsm) do
+        :gen_fsm.sync_send_all_state_event fsm, :current_state
+      end
+
+      def init(_) do
+        {:ok, :waiting, []}
+      end
+
+      def handle_sync_event(:current_state, _from, state, context) do
+        {:reply, state, state, context}
+      end
+    end
 
 To start a new state machine I create a new function that delegates to
 the `gen_fsm.start_link` module passing three arguments: the name of
