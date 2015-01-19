@@ -25,10 +25,10 @@ conversation with the customer was garbled by the din of the cafe and
 had to be repeated. Occasionally, a customer wouldn't know what they
 wanted and the cashier waited.
 
-This silly little dance of ordering coffee I noticed was a bit like a
-small distributed computation. Each of actors in the cafe was a state
-machine; they communicated through messages. I wondered if I could
-model these state machines in a computer program.
+I noticed this silly little dance, ordering coffee, was a bit like a
+small distributed computation: each of actors in the cafe was a state
+machine and they communicated through messages. I wondered if I could
+model this system in a computer program.
 
 I wondered if I could implement a model of this system in a
 programming language that I am learning called Elixir. 

@@ -3,12 +3,12 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Scott Moynes'
-SITENAME = u'smoynes online'
+SITENAME = u'smoynes i/o'
 SITEURL = ''
 
 PATH = 'content'
 
-TIMEZONE = 'Europe/Paris'
+TIMEZONE = 'America/Vancouver'
 
 DEFAULT_LANG = u'en'
 
