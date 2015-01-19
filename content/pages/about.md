@@ -26,5 +26,4 @@ just wouldn’t be right.
 <footer>
 — <cite>Shaquille O'Neal, movie star, musician, athlete, cop, alien</cite>
 </footer>
-
-
+</blockquote>
