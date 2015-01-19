@@ -3,7 +3,7 @@ Category: Elixir
 Tags: elixir
 Slug: fsm-in-elixir
 Summary: Short version for index and feeds
-Date: 2015-01-12
+
 
 A confession: I really love coffee but I don't like making it.
 
@@ -17,19 +17,26 @@ purchase my coffee from a local cafe. It is great! They have a few
 people behind the counter that make espresso and lattes and of course
 someone to take my money.
 
-I noticed that each of the people in the cafe works a little bit like
-a state machine and I wondered if I could model these state machines
-in a computer program.
+While I drank my coffee at the local cafe one day I watched people as
+they ordered their coffees and snacks. The cashier would tell the
+barista the coffees to pull or the milks to steam, the kitchen the
+sandwiches to prepare or the scones to plate. Sometimes the
+conversation with the customer was garbled by the din of the cafe and
+had to be repeated. Occasionally, a customer wouldn't know what they
+wanted and the cashier waited.
 
-I'm trying to learn the a new programming language so I figured I'd
-explore how to implement this model in Elixir. (The post assumes a
-basic familiarity with Elixir syntax. I'll try explain some of it but
-the unfamiliar reader is encouraged to read the
-[the crash course](http://elixir-lang.org/crash-course.html); it
+This silly little dance of ordering coffee I noticed was a bit like a
+small distributed computation. Each of actors in the cafe was a state
+machine; they communicated through messages. I wondered if I could
+model these state machines in a computer program.
+
+I wondered if I could implement a model of this system in a
+programming language that I am learning called Elixir. 
+
+(The post assumes a basic familiarity with Elixir syntax. I'll try
+explain some of it, but the unfamiliar reader is encouraged to read
+the [the crash course](http://elixir-lang.org/crash-course.html); it
 should cover everything needed to follow along.)
-
-First, I started with a really simple process: the person purchasing
-the coffee.
 
 Let's start small: with a single test. I want to test two simple behaviors:
 
@@ -38,12 +45,12 @@ Let's start small: with a single test. I want to test two simple behaviors:
   order.
 - When the state machine start, it begins in the `waiting` state.
 
-<script src="https://gist.github.com/smoynes/301f4bebaf2d8f7684af.js?file=FsmExperimentsTest.exs"></script>
+<script src="https://gist.github.com/smoynes/301f4bebaf2d8f7684af/91e2b9bad3c0e29dc5279801d035dec1b07fc459.js?file=FsmExperimentsTest.exs"></script>
 
 So what does this say? Not much, really. Just that when I create a new
 coffee purchaser, it starts in the waiting state. The test calls
 function called `start_link` that creates a new purchaser FSM and
-passes it a list of things to buy; In this case, just one item: a
+passes it a list of things to buy; in this case, just one item: a
 double espresso.
 
 I also add a convenience for testing: a query event that asks the
@@ -54,7 +61,7 @@ state.
 Now, to implement the purchaser state-machine using the `gen_fsm` OTP
 behavior.
 
-<script src="https://gist.github.com/smoynes/301f4bebaf2d8f7684af.js?file=CoffeePurchaser.ex"></script>
+<script src="https://gist.github.com/smoynes/301f4bebaf2d8f7684af/91e2b9bad3c0e29dc5279801d035dec1b07fc459.js?file=CoffeePurchaser.ex"></script>
 
 To start a new state machine I create a new function that delegates to
 the `gen_fsm.start_link` module passing three arguments: the name of
