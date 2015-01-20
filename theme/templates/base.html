@@ -57,56 +57,12 @@
 		    {% block content %}{% endblock %}
 		  </div>	
 		  
-		  <div class="sidebar">
-		    <div class="sidebar-container" {% if PELICAN_SOBER_STICKY_SIDEBAR %}id="sidebar-container-fixed"{% endif %}>
-
-	          {% if PELICAN_SOBER_ABOUT %}
-	            <aside>
-	              <h2>About</h2>
-			      <p>
-                    {{ PELICAN_SOBER_ABOUT }}
-			      </p>
-			    </aside>
-			  {% endif %}
-
-  	          <nav>
-	            <h2>Categories</h2>
-	            <ul>
-	              {% for cat, null in categories %}
-	                <li {% if cat == category %}class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
-	              {% endfor %}
-	            </ul>
-	          </nav>
-
-	          {% if SOCIAL %}
-	            <aside>
-	            <h2>Social</h2>
-			      <ul class="social">
-				    {% for name, link in SOCIAL %}
-				    <li><a href="{{ link }}">{{ name }}</a><i></i></li>
-				    {% endfor %}
-			      </ul>
-			    </aside>
-			  {% endif %}
-
-	          {% if LINKS %}
-	            <aside>
-	              <h2>Blogroll</h2>
-	              <ul>
-	                {% for name, link in LINKS %}
-	                  <li><a href="{{ link }}">{{ name }}</a></li>
-	                {% endfor %}
-	              </ul>
-	            </aside>
-	          {% endif %}
-	        </div>
-		  </div>
 
 	  </div>
 
       <footer>
 		<p role="contentinfo">
-		  {{ AUTHOR }} - Proudly powered by <a href="http://alexis.notmyidea.org/pelican/">pelican</a>. Theme <a href="https://github.com/fle/pelican-sober">pelican-sober</a>.
+		  {{ AUTHOR }} - Proudly powered by <a href="http://www.getpelican.com/">pelican</a>. Theme <a href="https://github.com/fle/pelican-sober">pelican-sober</a>.
     	</p>
 
 	  </footer>	
