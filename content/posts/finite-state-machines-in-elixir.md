@@ -4,7 +4,6 @@ Tags: elixir
 Slug: fsm-in-elixir
 Summary: Short version for index and feeds
 
-
 A confession: I really love coffee but I don't like making it.
 
 Coffee is a truly marvellous elixir composed of two basic ingredients:
@@ -38,37 +37,123 @@ explain some of it, but the unfamiliar reader is encouraged to read
 the [the crash course](http://elixir-lang.org/crash-course.html); it
 should cover everything needed to follow along.)
 
-Let's start small: with a single test. I want to test two simple behaviors:
+Starting out
+------------
 
-- I can create and start a coffee purchaser state machine. When I
-  create the state machine I want to initialize it with the guests
-  order.
-- When the state machine start, it begins in the `waiting` state.
+Elixir includes a tool called `mix` that is used to compile elixir
+projects and run development tasks. We can use it to create a project
+skeleton.
+
+<!-- starting-out-1 -->
+
+    % mix new cafe
+    * creating README.md
+    * creating .gitignore
+    * creating mix.exs
+    * creating config
+    * creating config/config.exs
+    * creating lib
+    * creating lib/cafe.ex
+    * creating test
+    * creating test/test_helper.exs
+    * creating test/cafe_test.exs
+    
+    Your mix project was created successfully.
+    You can use mix to compile it, test it, and more:
+    
+        cd cafe
+        mix test
+    
+    Run `mix help` for more commands.
+
+The `mix` command creates a few files that are mostly empty but it
+gives us a place to start. There is a stub for a module,
+`lib/cafe.ex`, and a test stub, `test/cafe_test.exs`, and some other
+files we won't worry about here.
+
+Elixir also has a tool called `iex` that is an interactive environment
+or REPL
+
+    % iex -S mix
+    Erlang/OTP 17 [erts-6.3] [source] [64-bit] [smp:4:4] [async-threads:10] [hipe] [kernel-poll:false] [dtrace]
+    
+    Interactive Elixir (1.0.2) - press Ctrl+C to exit (type h() ENTER for help)
+    iex(1)> Process.list()
+    [#PID<0.0.0>, #PID<0.3.0>, #PID<0.6.0>, #PID<0.7.0>, #PID<0.9.0>, #PID<0.10.0>,
+     #PID<0.11.0>, #PID<0.12.0>, #PID<0.13.0>, #PID<0.14.0>, #PID<0.15.0>,
+     #PID<0.16.0>, #PID<0.17.0>, #PID<0.18.0>, #PID<0.19.0>, #PID<0.20.0>,
+     #PID<0.21.0>, #PID<0.22.0>, #PID<0.23.0>, #PID<0.24.0>, #PID<0.25.0>,
+     #PID<0.26.0>, #PID<0.27.0>, #PID<0.28.0>, #PID<0.36.0>, #PID<0.37.0>,
+     #PID<0.38.0>, #PID<0.39.0>, #PID<0.40.0>, #PID<0.56.0>, #PID<0.57.0>,
+     #PID<0.58.0>, #PID<0.59.0>, #PID<0.60.0>, #PID<0.68.0>, #PID<0.69.0>,
+     #PID<0.70.0>, #PID<0.71.0>, #PID<0.72.0>, #PID<0.73.0>, #PID<0.74.0>,
+     #PID<0.75.0>, #PID<0.77.0>]
+    iex(2)> r Cafe
+    lib/cafe.ex:1: warning: redefining module Cafe
+    {:reloaded, Cafe, [Cafe]}
+
+In the above example, I call a function and can see the results as
+well as recompile a module so that any changes to the source file are
+included in the `iex` session. We'll be using these commands a lot to
+explore our cafe system.
+
+Agent zero
+----------
+
+There are a few options for how to model a state machine using
+Elixir. They all have tradeoffs, like any design decision, but I'll
+start with the simplest and see how far we can get with that.
+
+
+- I can create a cafe customer state machine.
+- When the state machine starts, it begins in the `waiting` state.
+- For testing convenience, I want to be able to get the state
+  machine's current state.
 
 <!-- -->
 
     :::elixir
-    defmodule FsmExperimentsTest do
-      use ExUnit.Case
-
-      alias FsmExperiments.CoffeePurchaser
-
-      setup do
-        {:ok, %{order: [:espresso]}}
+    defmodule Cafe.Customer do
+    
+      def start do
+        Agent.start &init/0
       end
-
-      test "initial state is :waiting", %{order: order} do
-        assert {:ok, fsm} = CoffeePurchaser.start_link order
-        assert :waiting = CoffeePurchaser.current_state fsm
+    
+      def stop(fsm) do
+        Agent.stop fsm
       end
-
+    
+      def init do
+        %{state: :idle}
+      end
+    
+      def current_state(fsm) do
+        Agent.get fsm, fn ctx -> ctx.state end
+      end
+      
     end
 
-So what does this say? Not much, really. Just that when I create a new
-coffee purchaser, it starts in the waiting state. The test calls
-function called `start_link` that creates a new purchaser FSM and
-passes it a list of things to buy; in this case, just one item: a
-double espresso.
+<!-- -->
+
+    iex(1)> {:ok, pid} = Cafe.Customer.start
+    {:ok, #PID<0.88.0>}
+    iex(2)> Cafe.Customer.current_state pid
+    :idle
+    iex(3)> Cafe.Customer.stop pid
+    :ok
+    iex(4)> Cafe.Customer.current_state pid
+    ** (exit) exited in: GenServer.call(#PID<0.88.0>, {:get, #Function<1.60568772/1 in Cafe.Customer.current_state/1>}, 5000)
+        ** (EXIT) no process
+        (elixir) lib/gen_server.ex:356: GenServer.call/3
+
+
+explain:
+
+- defmodule
+- use
+- alias
+- test context
+- asserts
 
 I also add a convenience for testing: a query event that asks the
 state machine in which state it is currently. The test calls
