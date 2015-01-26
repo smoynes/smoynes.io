@@ -11,12 +11,15 @@ water and the seed of a plant. A sip of coffee is a simple pleasure
 that comes in many preparations: a simple product from a complicated
 process.
 
-To prepare a coffee is usually pretty complicated so I prefer to
-purchase my coffee from a local cafe. It is great! They have a few
-people behind the counter that make espresso and lattes and of course
-someone to take my money.
+To prepare a coffee is usually pretty complicated. You need to find
+good beans that are well roasted and freshly ground as well some hot
+water. Then you have to filter or press or steep or whatever. All of
+this is way too much effort for me so I prefer to purchase my coffee
+from a local cafe. It is great! They have a few people behind the
+counter that know how to do all this and can work a pretty impressive
+looking machine to make really delicious espresso.
 
-While I drank my coffee at the local cafe one day I watched people as
+While I drank my coffee at the local cafe one day, I watched people as
 they ordered their coffees and snacks. The cashier would tell the
 barista the coffees to pull or the milks to steam, the kitchen the
 sandwiches to prepare or the scones to plate. Sometimes the
@@ -27,14 +30,13 @@ wanted and the cashier waited.
 I noticed this silly little dance, ordering coffee, was a bit like a
 small distributed computation: each of actors in the cafe was a state
 machine and they communicated through messages. I wondered if I could
-model this system in a computer program.
+model this system in a programming language that I am learning called
+Elixir.
 
-I wondered if I could implement a model of this system in a
-programming language that I am learning called Elixir.
-
-(The post assumes a basic familiarity with Elixir syntax. I'll try
-explain some of it, but the unfamiliar reader is encouraged to read
-the [the crash course](http://elixir-lang.org/crash-course.html); it
+(The post assumes a basic familiarity with Elixir syntax and data
+types. I'll try explain some of it, but the unfamiliar reader is
+encouraged to read the
+[the crash course](http://elixir-lang.org/crash-course.html); it
 should cover everything needed to follow along.)
 
 Starting out
