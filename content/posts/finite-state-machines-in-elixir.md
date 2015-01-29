@@ -2,7 +2,7 @@ Title: Modeling Finite State Machines in Elixir
 Category: Elixir
 Tags: elixir
 Slug: fsm-in-elixir
-Summary: Short version for index and feeds
+Summary: A look at how to create state machines using Agents
 
 A confession: I really love coffee but I don't like making it.
 
