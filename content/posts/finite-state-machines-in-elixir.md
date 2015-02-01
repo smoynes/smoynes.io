@@ -140,6 +140,11 @@ a simple API for querying and updating the state.
 
     end
 
+We can start and stop a finite state machine and query the current
+state by delegating to the Agent module.
+
+Let's try it out in the console:
+
 <!-- -->
 
     iex(1)> {:ok, pid} = Cafe.Customer.start
@@ -148,10 +153,121 @@ a simple API for querying and updating the state.
     :idle
     iex(3)> Cafe.Customer.stop pid
     :ok
-    iex(4)> Cafe.Customer.current_state pid
-    ** (exit) exited in: GenServer.call(#PID<0.88.0>, {:get, #Function<1.60568772/1 in Cafe.Customer.current_state/1>}, 5000)
-        ** (EXIT) no process
-        (elixir) lib/gen_server.ex:356: GenServer.call/3
+
+Well, that is pretty cool. With relatively few lines of code, I've got
+a basic finite state machine with a single state.
+
+// Introduce full state machine.
+
+Let's try to add all the states and transitions for our state machine,
+ignoring any actions the customer has to perform.
+
+<!-- agent-zero-2 -->
+
+    ::::elixir
+    lib/customer.ex
+
+    defmodule Cafe.Customer do
+
+      def order(fsm, order) do
+        Agent.update fsm, &handle_event(:order, &1, order)
+      end
+
+      def cashier(fsm, cashier_pid) do
+        Agent.update fsm, &handle_event(:cashier, &1, cashier_pid)
+      end
+
+      def total(fsm, total) do
+        Agent.update fsm, &handle_event(:total, &1, total)
+      end
+
+      def confirm(fsm, confirmation) do
+        Agent.update fsm, &handle_event(:confirm, &1, confirm)
+      end
+
+      def handle_event(:order, %{state: :idle} = ctx, order) do
+        Enum.into [state: :wait_cashier, order: order], ctx
+      end
+
+      def handle_event(:order, %{state: :wait_order} = ctx, order) do
+        Enum.into [state: :paying, order: order], ctx
+      end
+
+      def handle_event(:cashier, %{state: :idle} = ctx, cashier) do
+        Enum.into [state: :wait_order, cashier: cashier], ctx
+      end
+
+      def handle_event(:cashier, %{state: :wait_cashier} = ctx, cashier) do
+        Enum.into [state: :paying, cashier: cashier], ctx
+      end
+
+      def handle_event(:total, %{state: :paying} = ctx, total) do
+        Enum.into [state: :wait_delivery, total: total], ctx
+      end
+
+      def handle_event(:delivery, %{state: :wait_delivery} = ctx, confirmation) do
+        Enum.into [state: :done, confirmation: confirmation], ctx
+      end
+
+    end
+
+<!-- agent-zero-3 -->
+
+    ::::elixir
+    lib/customer.ex
+
+    defmodule Cafe.Customer do
+
+      def order(fsm, order) do
+        send_event fsm, :order, order
+      end
+
+      def cashier(fsm, cashier_pid) do
+        send_event fsm, :cashier, cashier_pid
+      end
+
+      def total(fsm, total) do
+        send_event fsm, :total, total
+      end
+
+      def confirm(fsm, confirmation) do
+        send_event fsm, :confirm, confirmation
+      end
+
+      def send_event(fsm, event, message) do
+        Agent.update fsm, __MODULE__, :handle_event, [event, message]
+      end
+
+      def handle_event(ctx, event, message) do
+        do_handle_event(ctx, event, message)
+        |> Enum.into ctx
+      end
+
+      def do_handle_event(%{state: :idle}, :order, order) do
+        [state: :wait_cashier, order: order]
+      end
+
+      def do_handle_event(%{state: :wait_order},:order, order) do
+        [state: :paying, order: order]
+      end
+
+      def do_handle_event(%{state: :idle}, :cashier, cashier) do
+        [state: :wait_order, cashier: cashier]
+      end
+
+      def do_handle_event(%{state: :wait_cashier}, :cashier, cashier) do
+        [state: :paying, cashier: cashier]
+      end
+
+      def do_handle_event(%{state: :paying}, :total, total) do
+        [state: :wait_delivery, total: total]
+      end
+
+      def do_handle_event(%{state: :wait_delivery}, :delivery, confirmation) do
+        [state: :done, confirmation: confirmation]
+      end
+
+    end
 
 
 - coffee purchasing
