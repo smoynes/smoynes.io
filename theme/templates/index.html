@@ -3,24 +3,26 @@
 
 {% block content %}
 
+<blockquote>
+  <p>
+    Without real experience in using the computer to get useful
+    results the computer science major is apt to know all about the
+    marvellous tool except how to use it. Such a person is a mere
+    technician, skilled in manipulating the tool but with little sense
+    of how and when to use it for its basic purposes.
+  </p>
+<footer>
+— <cite>Richard Hamming, 1968 Turing Award Lecture</cite>
+</footer>
+</blockquote>
+
 {% for article in articles %}
 
-    {% if loop.index == 1 %}
-
-      <article>
-        <h1><a href="{{ SITEURL }}/{{ article.url }}">{{ article.title }}</a></h1>
-        {{ article.content }}
-      </article>
-
-      <hr />
-
-      {% if loop.length  > 1 %}
-        <div>
-          <h3>Last posts</h3>
-          <ol class="archive">
-      {% endif %}
-    
-    {% elif loop.index < 7 %}
+  <div>
+    <h3>Recent posts</h3>
+    <ul class="archive">
+         
+    {% if loop.index < 7 %}
       <li>
         {% include 'article_link.inc.html' %}
       </li>
@@ -28,9 +30,7 @@
 
 {% endfor %}
 
-{% if articles|length > 1 %}
-          </ol>
-        </div>
-{% endif %}
+    </ol>
+  </div>
 
 {% endblock content %}
